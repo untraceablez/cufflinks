@@ -3,6 +3,8 @@ import path from 'path';
 import { initThemeDirectory } from './theme-dir.js';
 import { registerIpcHandlers } from './ipc/handlers.js';
 import { setupDesktopLayer } from './desktop-layer/index.js';
+import { SourceManager } from './sources/manager.js';
+import { IPC } from '@cufflinks/shared';
 
 /**
  * @summary Application entry point. Bootstraps all main-process subsystems.
@@ -24,6 +26,7 @@ import { setupDesktopLayer } from './desktop-layer/index.js';
 
 let widgetWindow: BrowserWindow | null = null;
 let settingsWindow: BrowserWindow | null = null;
+const sourceManager = new SourceManager();
 
 /**
  * @summary Resolves a path relative to `out/main/` at runtime.
@@ -120,10 +123,21 @@ app.whenReady().then(async () => {
     }
   });
 
-  registerIpcHandlers({ widgetWindow, settingsWindow });
+  // Push now-playing updates to the widget window whenever the active source changes
+  sourceManager.on('now-playing-changed', (track) => {
+    widgetWindow?.webContents.send(IPC.NOW_PLAYING_CHANGED, track ?? null);
+  });
+
+  await sourceManager.startAll();
+
+  registerIpcHandlers({ widgetWindow, settingsWindow, sourceManager });
 }).catch((err: unknown) => {
   console.error('[main] Failed to initialize:', err);
   app.quit();
+});
+
+app.on('before-quit', () => {
+  void sourceManager.stopAll();
 });
 
 app.on('window-all-closed', () => {

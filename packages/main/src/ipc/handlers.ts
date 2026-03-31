@@ -3,10 +3,12 @@ import type { BrowserWindow } from 'electron';
 import { IPC } from '@cufflinks/shared';
 import { store } from '../store.js';
 import { discoverThemes } from '../theme-loader.js';
+import type { SourceManager } from '../sources/manager.js';
 
 interface HandlerContext {
   widgetWindow: BrowserWindow | null;
   settingsWindow: BrowserWindow | null;
+  sourceManager: SourceManager;
 }
 
 /**
@@ -24,6 +26,33 @@ interface HandlerContext {
  * @param ctx - References to the main application windows, used for push notifications.
  */
 export function registerIpcHandlers(ctx: HandlerContext): void {
+  /**
+   * @summary Returns the current now-playing track from the active source.
+   *
+   * @param _event - IPC event (unused).
+   * @returns `TrackMetadata` if something is playing, or `null`.
+   */
+  ipcMain.handle(IPC.GET_NOW_PLAYING, (_event) => {
+    const states = ctx.sourceManager.getAllStates();
+    for (const state of Object.values(states)) {
+      if (state.status === 'active' || state.status === 'paused') {
+        return state.track;
+      }
+    }
+    return null;
+  });
+
+  /**
+   * @summary Reorders sources by user-specified priority.
+   *
+   * @param _event - IPC event (unused).
+   * @param priority - Array of source IDs, highest priority first.
+   */
+  ipcMain.handle(IPC.SET_SOURCE_PRIORITY, (_event, priority: string[]) => {
+    ctx.sourceManager.setPriority(priority);
+    store.set('sourcePriority', priority);
+  });
+
   /**
    * @summary Returns all discovered theme manifests.
    *
