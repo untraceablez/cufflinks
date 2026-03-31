@@ -2,10 +2,12 @@
   "name": "cufflinks",
   "version": "0.1.0",
   "private": true,
+  "main": "out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
-    "build": "pnpm -r build",
-    "dist": "electron-builder",
+    "build": "electron-vite build && pnpm --filter @cufflinks/widget build",
+    "dist": "pnpm build && electron-builder",
+    "release": "pnpm build && electron-builder --publish always",
     "lint": "eslint packages --ext .ts,.tsx",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run"

@@ -1,0 +1,87 @@
+name: CI
+
+# Runs on every push and pull request to master.
+# Catches type errors and lint issues before they reach a release tag.
+on:
+  push:
+    branches: [master, main]
+    # Skip when the only change is a version tag (release workflow handles that)
+    tags-ignore: ['v*']
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  check:
+    name: Typecheck & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install Linux system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libsecret-1-dev
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+  build-smoke:
+    name: Build smoke test (Linux)
+    runs-on: ubuntu-latest
+    # Only run on pushes to master (not PRs) to keep PR checks fast
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install Linux system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libsecret-1-dev \
+            libx11-dev \
+            libxkbfile-dev \
+            libglib2.0-dev
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build (electron-vite + widget)
+        run: pnpm build
+        env:
+          # Use placeholder values — real secrets only needed for actual releases
+          SPOTIFY_CLIENT_ID: placeholder
+          SPOTIFY_CLIENT_SECRET: placeholder
+          LASTFM_API_KEY: placeholder
+          LASTFM_SHARED_SECRET: placeholder

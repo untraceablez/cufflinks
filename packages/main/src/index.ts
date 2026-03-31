@@ -14,10 +14,30 @@ import { setupDesktopLayer } from './desktop-layer/index.js';
  * 3. Create widget + settings windows
  * 4. `setupDesktopLayer()` — Must run after windows are shown
  * 5. `registerIpcHandlers()` — Must run before renderer loads
+ *
+ * electron-vite output structure (relative to this file at out/main/index.js):
+ *   ../preload/settings.js   — settings window contextBridge
+ *   ../preload/widget.js     — widget window contextBridge
+ *   ../renderer/index.html   — settings UI
+ *   ../renderer/widget/      — widget UI
  */
 
 let widgetWindow: BrowserWindow | null = null;
 let settingsWindow: BrowserWindow | null = null;
+
+/**
+ * @summary Resolves a path relative to `out/main/` at runtime.
+ *
+ * @remarks
+ * `__dirname` in the packaged app points to the `out/main/` directory.
+ * Use this helper whenever referencing sibling output directories (preload, renderer).
+ *
+ * @param segments - Path segments relative to `out/main/`.
+ * @returns Absolute filesystem path.
+ */
+function outPath(...segments: string[]): string {
+  return path.join(__dirname, ...segments);
+}
 
 /**
  * @summary Creates the transparent, frameless widget window.
@@ -43,14 +63,14 @@ function createWidgetWindow(): BrowserWindow {
       nodeIntegration: false,
       // Required for theme sandboxing via <webview> tag
       webviewTag: true,
-      preload: path.join(__dirname, 'preload-widget.js'),
+      preload: outPath('../preload/widget.js'),
     },
   });
 
-  if (process.env['NODE_ENV'] === 'development') {
+  if (!app.isPackaged) {
     void win.loadURL('http://localhost:5174');
   } else {
-    void win.loadFile(path.join(__dirname, '../renderer-widget/index.html'));
+    void win.loadFile(outPath('../renderer/widget/index.html'));
   }
 
   return win;
@@ -60,9 +80,8 @@ function createWidgetWindow(): BrowserWindow {
  * @summary Creates the settings/onboarding window.
  *
  * @remarks
- * This is a standard focusable window rendered by the main renderer package
- * (React + Vite). Hidden by default; shown when the user opens settings from
- * the system tray.
+ * Hidden by default; shown when the user opens settings from the system tray.
+ * electron-vite HMR runs on port 5173 in development.
  *
  * @returns The created BrowserWindow instance.
  */
@@ -75,14 +94,14 @@ function createSettingsWindow(): BrowserWindow {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
-      preload: path.join(__dirname, 'preload-settings.js'),
+      preload: outPath('../preload/settings.js'),
     },
   });
 
-  if (process.env['NODE_ENV'] === 'development') {
+  if (!app.isPackaged) {
     void win.loadURL('http://localhost:5173');
   } else {
-    void win.loadFile(path.join(__dirname, '../renderer/index.html'));
+    void win.loadFile(outPath('../renderer/index.html'));
   }
 
   return win;
