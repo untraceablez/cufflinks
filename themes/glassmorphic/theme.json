@@ -1,0 +1,11 @@
+{
+  "id": "com.cufflinks.glassmorphic",
+  "name": "Glassmorphic",
+  "version": "1.0.0",
+  "author": "Cufflinks",
+  "description": "A frosted glass now-playing widget with album art blur background.",
+  "entrypoint": "index.html",
+  "defaultSize": { "width": 340, "height": 100 },
+  "resizable": true,
+  "permissions": []
+}

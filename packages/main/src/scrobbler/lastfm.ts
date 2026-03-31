@@ -40,9 +40,6 @@ export class LastfmScrobbler {
   /** @summary Timestamp (ms) when the current track started playing. */
   private _trackStartTime: number | null = null;
 
-  /** @summary The track currently being timed for scrobble eligibility. */
-  private _currentTrack: TrackMetadata | null = null;
-
   /** @summary Timer that fires when the scrobble threshold is reached. */
   private _scrobbleTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -70,7 +67,6 @@ export class LastfmScrobbler {
    */
   onTrackStart(track: TrackMetadata, threshold: number, minSeconds: number): void {
     this._clearScrobbleTimer();
-    this._currentTrack = track;
     this._trackStartTime = Date.now();
 
     void this._updateNowPlaying(track);
@@ -91,7 +87,6 @@ export class LastfmScrobbler {
    */
   onTrackStop(): void {
     this._clearScrobbleTimer();
-    this._currentTrack = null;
     this._trackStartTime = null;
   }
 

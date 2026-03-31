@@ -1,0 +1,11 @@
+{
+  "id": "com.cufflinks.minimal",
+  "name": "Minimal",
+  "version": "1.0.0",
+  "author": "Cufflinks",
+  "description": "A clean, minimal now-playing widget.",
+  "entrypoint": "index.html",
+  "defaultSize": { "width": 400, "height": 80 },
+  "resizable": true,
+  "permissions": []
+}

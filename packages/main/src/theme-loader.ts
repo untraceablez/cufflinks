@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import type { Dirent } from 'node:fs';
 import path from 'path';
 import { THEMES_DIR } from './theme-dir.js';
 import type { ThemeManifest } from '@cufflinks/shared';
@@ -45,9 +46,9 @@ function validateThemeManifest(manifest: unknown): asserts manifest is ThemeMani
  * @returns Array of validated manifests with their resolved directory paths.
  */
 export async function discoverThemes(): Promise<ResolvedTheme[]> {
-  let entries: Awaited<ReturnType<typeof fs.readdir>>;
+  let entries: Dirent[];
   try {
-    entries = await fs.readdir(THEMES_DIR, { withFileTypes: true });
+    entries = await fs.readdir(THEMES_DIR, { withFileTypes: true, encoding: 'utf8' });
   } catch {
     return [];
   }

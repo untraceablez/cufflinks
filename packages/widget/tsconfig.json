@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "noEmit": true,
+    "types": ["electron"],
     "paths": {
       "@cufflinks/shared": ["../shared/src/index.ts"]
     }
