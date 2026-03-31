@@ -34,10 +34,32 @@ Supports Spotify, TIDAL, and Apple Music. Scrobbles to Last.fm. Fully themeable 
 
 ### Prerequisites
 
-- Node.js 22 LTS
-- pnpm 9+
-- **Windows only:** `npx windows-build-tools` (as Administrator) for native addons
-- **macOS only:** Xcode Command Line Tools (`xcode-select --install`)
+#### Windows
+
+1. **Install Node.js 22 LTS** — download the installer from [nodejs.org](https://nodejs.org/en/download) and run it. Tick "Add to PATH" when prompted. Open a new PowerShell window after installing.
+
+2. **Install pnpm** — in PowerShell:
+   ```powershell
+   npm install -g pnpm
+   ```
+
+3. **Install native addon build tools** — in an **Administrator** PowerShell:
+   ```powershell
+   npm install -g windows-build-tools
+   ```
+   This installs Python and the MSVC build tools required by `keytar` and `better-sqlite3`.
+
+#### macOS
+
+1. **Install Node.js 22 LTS** from [nodejs.org](https://nodejs.org/en/download) or via Homebrew: `brew install node@22`
+2. **Install pnpm**: `npm install -g pnpm`
+3. **Install Xcode Command Line Tools**: `xcode-select --install`
+
+#### Linux
+
+1. **Install Node.js 22 LTS** via your package manager or [nvm](https://github.com/nvm-sh/nvm)
+2. **Install pnpm**: `npm install -g pnpm`
+3. **Install libsecret** (required by keytar): `sudo apt install libsecret-1-dev` (Debian/Ubuntu) or equivalent
 
 ### Install
 
