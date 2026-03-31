@@ -66,6 +66,9 @@ export class SpotifySource extends EventEmitter implements ISource {
       if (err instanceof SourceAuthError) {
         this._setState({ status: 'auth-required', track: null });
         this._stopPolling();
+      } else if (err instanceof SourceUnavailableError) {
+        this._setState({ status: 'unavailable', track: null });
+        this._stopPolling();
       } else {
         console.warn(`[${this.id}] Poll failed:`, err);
       }

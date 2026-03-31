@@ -63,7 +63,12 @@ export class AppleMusicSource extends EventEmitter implements ISource {
       const track = await this._fetchNowPlaying();
       this._reconcile(track);
     } catch (err) {
-      console.warn(`[${this.id}] Poll failed:`, err);
+      if (err instanceof SourceUnavailableError) {
+        this._setState({ status: 'unavailable', track: null });
+        this._stopPolling();
+      } else {
+        console.warn(`[${this.id}] Poll failed:`, err);
+      }
     }
   }
 
