@@ -36,7 +36,7 @@ Supports Spotify, TIDAL, and Apple Music. Scrobbles to Last.fm. Fully themeable 
 
 #### Windows
 
-1. **Install Node.js 22 LTS** — download the installer from [nodejs.org](https://nodejs.org/en/download) and run it. Tick "Add to PATH" when prompted. Open a new PowerShell window after installing.
+1. **Install Node.js 22 LTS** — download the **22 LTS** installer (not "Current") from [nodejs.org/en/download](https://nodejs.org/en/download) and run it. Tick "Add to PATH" when prompted. Open a new PowerShell window after installing. Using a newer "Current" release (v23+) will cause native addon build failures.
 
 2. **Install pnpm** — in PowerShell:
    ```powershell
@@ -51,7 +51,7 @@ Supports Spotify, TIDAL, and Apple Music. Scrobbles to Last.fm. Fully themeable 
 
 #### macOS
 
-1. **Install Node.js 22 LTS** from [nodejs.org](https://nodejs.org/en/download) or via Homebrew: `brew install node@22`
+1. **Install Node.js 22 LTS** from [nodejs.org/en/download](https://nodejs.org/en/download) or via Homebrew: `brew install node@22`
 2. **Install pnpm**: `npm install -g pnpm`
 3. **Install Xcode Command Line Tools**: `xcode-select --install`
 
