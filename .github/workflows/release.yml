@@ -34,6 +34,10 @@ jobs:
               dist/*.deb
 
     runs-on: ${{ matrix.os }}
+    # Optional: reference a GitHub Environment named "release" that has
+    # required-reviewer protection so you approve before artifacts are published.
+    # Remove this line (or leave it commented) to publish immediately on tag push.
+    # environment: release
 
     steps:
       - name: Checkout
